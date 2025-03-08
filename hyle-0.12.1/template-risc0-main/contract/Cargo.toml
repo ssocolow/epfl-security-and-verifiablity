@@ -1,0 +1,14 @@
+[package]
+name = "contract"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+sdk = { workspace = true }
+serde = { version = "1.0", default-features = false, features = [
+    "derive",
+    "alloc",
+] }
+borsh = { version = "1.5.5" }
+tfhe = { version = "~1.0.1", features = ["boolean", "shortint", "integer"] }
+rand = "0.9.0"
