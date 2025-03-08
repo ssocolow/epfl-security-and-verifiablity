@@ -114,6 +114,20 @@ impl IdentityVerification for IdentityContractState {
             None => Err("Identity not found"),
         }
     }
+    fn check_membership(&self, m1: u32, m2: u32, m3: u32, m4: u32) -> Result<bool, &'static str> {
+        let mut hasher = Sha256::new();
+        hasher.update(id.as_bytes());
+        let hashed = hex::encode(hasher.finalize());
+        if *stored_info.hash != hashed {
+            return Ok(false);
+        }
+        let a = FheUint32::encrypt(m1, &client_key);
+        let b = FheUint32::encrypt(m2, &client_key);
+        let c = FheUint32::encrypt(m3, &client_key);
+        let d = FheUint32::encrypt(m4, &client_key);
+
+        // put the hash of the encrypted values into the blockchain
+        
 }
 
 impl Default for IdentityContractState {
