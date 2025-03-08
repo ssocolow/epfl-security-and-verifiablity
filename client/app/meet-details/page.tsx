@@ -12,6 +12,26 @@ import { WalletRequiredDialog } from "@/components/wallet-required-dialog"
 import { ArrowLeft, Users, Sparkles, Search, UserCheck } from "lucide-react"
 import Link from "next/link"
 
+
+import { processPSI, PsiResponse } from "@/services/psiService";
+
+const handleProcessPSI = async () => {
+  // Replace these values with real data from your app
+  const psiData = {
+    public_key: "AlicePublicKey",
+    encrypted_interests: ["E(interest1)", "E(interest2)"],
+    merkle_root: "MerkleRootHash",
+  };
+
+  try {
+    const result: PsiResponse = await processPSI(psiData);
+    console.log("PSI result:", result.fhe_result);
+    // Use the FHE results as needed (e.g., display common interests)
+  } catch (error) {
+    console.error("Error processing PSI:", error);
+  }
+};
+
 export default function MeetDetails() {
   const router = useRouter()
   const { connected, connectWallet } = useWallet()
