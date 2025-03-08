@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -18,6 +18,12 @@ export default function Home() {
   const { connected, connectWallet } = useWallet()
   const [showWalletDialog, setShowWalletDialog] = useState(false)
   const [showJoinDialog, setShowJoinDialog] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  // Only show the component after it has mounted to avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleCreateMeet = () => {
     if (!connected) {
@@ -38,60 +44,62 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-40 w-full border-b bg-background">
-        <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
-          <div className="flex gap-6 md:gap-10">
+        <div className="container flex h-16 items-center justify-between px-4">
+          <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center space-x-2">
               <Users className="h-6 w-6" />
               <span className="inline-block font-bold">ConnectPSI</span>
             </Link>
-            <nav className="hidden gap-6 md:flex">
-              <Link
-                href="#features"
-                className="flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-              >
-                Features
-              </Link>
-              <Link
-                href="#how-it-works"
-                className="flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-              >
-                How It Works
-              </Link>
-              <Link
-                href="#about"
-                className="flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-              >
-                About
-              </Link>
-            </nav>
           </div>
-          <div className="flex flex-1 items-center justify-end space-x-4">
-            <nav className="flex items-center space-x-2">
-              <WalletConnect />
-            </nav>
+          <nav className="hidden md:flex gap-6 mx-4">
+            <Link
+              href="#features"
+              className="flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            >
+              Features
+            </Link>
+            <Link
+              href="#how-it-works"
+              className="flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            >
+              How It Works
+            </Link>
+            <Link
+              href="#about"
+              className="flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            >
+              About
+            </Link>
+          </nav>
+          <div className="flex items-center">
+            <WalletConnect />
           </div>
         </div>
       </header>
       <main className="flex-1">
         <section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
-          <div className="container flex max-w-[64rem] flex-col items-center gap-4 text-center">
+          <div className="container flex max-w-[64rem] flex-col items-center gap-4 text-center px-4">
             <Badge className="px-3 py-1 text-sm" variant="secondary">
               Private Networking
             </Badge>
-            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
+            <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
               Connect with people who share your interests
             </h1>
             <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
               Using Private Set Intersection technology to find common interests without revealing your personal data.
             </p>
-            <div className="flex flex-col gap-4 sm:flex-row">
-              <Button className="h-12 px-8 flex items-center gap-2" size="lg" onClick={handleCreateMeet}>
+            <div className="flex flex-col w-full gap-4 sm:flex-row sm:w-auto">
+              <Button
+                className="h-12 px-8 flex items-center gap-2 w-full sm:w-auto"
+                size="lg"
+                onClick={handleCreateMeet}
+              >
                 <Plus className="h-4 w-4" />
                 Create Meet
               </Button>
               <Button
                 variant="outline"
-                className="h-12 px-8 flex items-center gap-2"
+                className="h-12 px-8 flex items-center gap-2 w-full sm:w-auto"
                 size="lg"
                 onClick={handleJoinMeet}
               >
@@ -101,10 +109,13 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <section id="features" className="container space-y-6 bg-slate-50 py-8 dark:bg-transparent md:py-12 lg:py-24">
+        <section
+          id="features"
+          className="container space-y-6 bg-slate-50 py-8 dark:bg-transparent md:py-12 lg:py-24 px-4"
+        >
           <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
             <h2 className="text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl">Features</h2>
-            <p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
+            <p className="max-w-full leading-normal text-muted-foreground sm:text-lg sm:leading-7">
               Our platform uses cutting-edge technology to create meaningful connections while protecting your privacy.
             </p>
           </div>
@@ -138,10 +149,10 @@ export default function Home() {
             </Card>
           </div>
         </section>
-        <section id="how-it-works" className="container py-8 md:py-12 lg:py-24">
+        <section id="how-it-works" className="container py-8 md:py-12 lg:py-24 px-4">
           <div className="mx-auto flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center">
             <h2 className="text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl">How It Works</h2>
-            <p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
+            <p className="max-w-full leading-normal text-muted-foreground sm:text-lg sm:leading-7">
               Our platform uses Private Set Intersection to find common interests without compromising privacy.
             </p>
           </div>
@@ -200,20 +211,24 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <section className="container py-8 md:py-12 lg:py-24">
+        <section className="container py-8 md:py-12 lg:py-24 px-4">
           <div className="mx-auto flex max-w-[58rem] flex-col items-center gap-4 text-center">
             <h2 className="text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl">Ready to Connect?</h2>
-            <p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
+            <p className="max-w-full leading-normal text-muted-foreground sm:text-lg sm:leading-7">
               Start networking with people who share your interests while keeping your data private.
             </p>
-            <div className="flex flex-col gap-4 sm:flex-row">
-              <Button className="h-12 px-8 flex items-center gap-2" size="lg" onClick={handleCreateMeet}>
+            <div className="flex flex-col w-full gap-4 sm:flex-row sm:w-auto">
+              <Button
+                className="h-12 px-8 flex items-center gap-2 w-full sm:w-auto"
+                size="lg"
+                onClick={handleCreateMeet}
+              >
                 <Plus className="h-4 w-4" />
                 Create Meet
               </Button>
               <Button
                 variant="outline"
-                className="h-12 px-8 flex items-center gap-2"
+                className="h-12 px-8 flex items-center gap-2 w-full sm:w-auto"
                 size="lg"
                 onClick={handleJoinMeet}
               >
@@ -240,19 +255,23 @@ export default function Home() {
         </div>
       </footer>
 
-      <WalletRequiredDialog
-        open={showWalletDialog}
-        onOpenChange={setShowWalletDialog}
-        onConnectWallet={async () => {
-          const success = await connectWallet()
-          if (success) {
-            setShowWalletDialog(false)
-          }
-          return success
-        }}
-      />
+      {mounted && (
+        <>
+          <WalletRequiredDialog
+            open={showWalletDialog}
+            onOpenChange={setShowWalletDialog}
+            onConnectWallet={async () => {
+              const success = await connectWallet()
+              if (success) {
+                setShowWalletDialog(false)
+              }
+              return success
+            }}
+          />
 
-      <JoinMeetDialog open={showJoinDialog} onOpenChange={setShowJoinDialog} />
+          <JoinMeetDialog open={showJoinDialog} onOpenChange={setShowJoinDialog} />
+        </>
+      )}
     </div>
   )
 }

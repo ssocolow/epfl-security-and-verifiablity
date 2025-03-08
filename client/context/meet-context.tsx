@@ -1,12 +1,14 @@
 "use client"
 
-import { createContext, useContext, useState, type ReactNode } from "react"
+import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 
+// Update the Question interface to support multiple choice
 export interface Question {
   id: number
   text: string
+  options: string[]
   selected?: boolean
-  answer?: boolean
+  answer?: string // Changed from boolean to string to store the selected option
 }
 
 interface MeetContextType {
@@ -16,44 +18,63 @@ interface MeetContextType {
   setMeetCode: (code: string) => void
   setDescription: (description: string) => void
   toggleQuestionSelection: (id: number) => void
-  setQuestionAnswer: (id: number, answer: boolean) => void
+  setQuestionAnswer: (id: number, answer: string) => void
   getSelectedQuestions: () => Question[]
   resetMeet: () => void
 }
 
+// Replace the defaultQuestions array with the new multiple-choice questions
 const defaultQuestions: Question[] = [
-  { id: 1, text: "I have gone hiking in the past year." },
-  { id: 2, text: "I own at least one physical book." },
-  { id: 3, text: "I have played a video game in the last month." },
-  { id: 4, text: "I have had a deep conversation about life or philosophy recently." },
-  { id: 5, text: "I have tried a cuisine from another country in the past three months." },
-  { id: 6, text: "I can speak more than one language fluently." },
-  { id: 7, text: "I have owned a pet at some point in my life." },
-  { id: 8, text: "I have listened to a podcast or audiobook in the past month." },
-  { id: 9, text: "I have attended a live concert, festival, or theater performance in the past year." },
-  { id: 10, text: "I have exercised at least three times in the past week." },
-  { id: 11, text: "I have read or watched news about world events this week." },
-  { id: 12, text: "I have completed a puzzle, riddle, or brain teaser in the last month." },
-  { id: 13, text: "I have woken up before 6 AM at least once this past week." },
-  { id: 14, text: "I have introduced myself to a new person in the last month." },
-  { id: 15, text: "I have used or learned about AI, blockchain, or VR in the past year." },
+  {
+    id: 1,
+    text: "What is your favourite book?",
+    options: ["Percy Jackson", "Harry Potter", "Angels and Demons", "Snow Crash", "Algorithms, third edition"],
+  },
+  {
+    id: 2,
+    text: "Where do you study?",
+    options: ["Paris", "EPFL", "Oxford", "UCL", "Imperial"],
+  },
+  {
+    id: 3,
+    text: "What is your primary language?",
+    options: ["German", "French", "Chinese", "Spanish", "English"],
+  },
+  {
+    id: 4,
+    text: "What subject are you most interested in?",
+    options: ["zkVM", "zkTLS", "AI", "Sharding", "Quantum Computers"],
+  },
 ]
+
+// Generate a random 6-character code
+const generateMeetCode = () => {
+  return Math.random().toString(36).substring(2, 8).toUpperCase()
+}
 
 const MeetContext = createContext<MeetContextType | undefined>(undefined)
 
 export function MeetProvider({ children }: { children: ReactNode }) {
-  const [meetCode, setMeetCode] = useState(() => {
-    // Generate a random 6-character code
-    return Math.random().toString(36).substring(2, 8).toUpperCase()
-  })
+  // Start with a placeholder, then update after mount
+  const [meetCode, setMeetCode] = useState("LOADING")
   const [description, setDescription] = useState("")
   const [questions, setQuestions] = useState<Question[]>(defaultQuestions)
+  const [isInitialized, setIsInitialized] = useState(false)
+
+  // Generate the meet code after component mounts to avoid hydration mismatch
+  useEffect(() => {
+    if (!isInitialized) {
+      setMeetCode(generateMeetCode())
+      setIsInitialized(true)
+    }
+  }, [isInitialized])
 
   const toggleQuestionSelection = (id: number) => {
     setQuestions(questions.map((q) => (q.id === id ? { ...q, selected: !q.selected } : q)))
   }
 
-  const setQuestionAnswer = (id: number, answer: boolean) => {
+  // Update the setQuestionAnswer function to handle string answers
+  const setQuestionAnswer = (id: number, answer: string) => {
     setQuestions(questions.map((q) => (q.id === id ? { ...q, answer } : q)))
   }
 
@@ -62,7 +83,7 @@ export function MeetProvider({ children }: { children: ReactNode }) {
   }
 
   const resetMeet = () => {
-    setMeetCode(Math.random().toString(36).substring(2, 8).toUpperCase())
+    setMeetCode(generateMeetCode())
     setDescription("")
     setQuestions(defaultQuestions)
   }

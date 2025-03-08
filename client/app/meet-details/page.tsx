@@ -30,10 +30,10 @@ export default function MeetDetails() {
 
     // In a real app, you would use PSI to find common interests
     // For demo purposes, we'll just simulate some common interests
-    const answeredQuestions = questions.filter((q) => q.selected && q.answer === true)
+    const answeredQuestions = questions.filter((q) => q.selected && q.answer)
     const simulatedCommonInterests = answeredQuestions
       .filter(() => Math.random() > 0.5) // Randomly select some as "common"
-      .map((q) => q.text)
+      .map((q) => `${q.text}: ${q.answer}`)
 
     setCommonInterests(simulatedCommonInterests)
   }, [connected, questions])
@@ -57,7 +57,7 @@ export default function MeetDetails() {
     // Simulate API call to search for user
     setTimeout(() => {
       // In a real app, you would use PSI to find common interests with this specific user
-      const simulatedUserCommonInterests = commonInterests.filter(() => Math.random() > 0.3) // Randomly select some as "common with this user"
+      const simulatedUserCommonInterests = commonInterests.filter(() => Math.random() > 0.3)
 
       setSearchedUser(userId)
       setUserCommonInterests(simulatedUserCommonInterests)
@@ -76,7 +76,7 @@ export default function MeetDetails() {
   }
 
   return (
-    <div className="container max-w-4xl py-8">
+    <div className="container max-w-4xl py-8 px-4">
       <div className="mb-8">
         <Link href="/" className="flex items-center text-sm text-muted-foreground hover:text-primary">
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -84,7 +84,7 @@ export default function MeetDetails() {
         </Link>
       </div>
 
-      <h1 className="text-3xl font-bold mb-2">Meet: {meetCode}</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-2">Meet: {meetCode}</h1>
 
       <div className="grid gap-8 md:grid-cols-2">
         <Card>
@@ -138,14 +138,19 @@ export default function MeetDetails() {
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <Label htmlFor="userId">User ID</Label>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <Input
                   id="userId"
                   placeholder="Enter user ID (e.g., 0x1234...)"
                   value={userId}
                   onChange={(e) => setUserId(e.target.value)}
+                  className="flex-grow"
                 />
-                <Button onClick={handleSearchUser} disabled={isSearching} className="flex items-center gap-2">
+                <Button
+                  onClick={handleSearchUser}
+                  disabled={isSearching}
+                  className="flex items-center gap-2 mt-2 sm:mt-0"
+                >
                   {isSearching ? (
                     "Searching..."
                   ) : (

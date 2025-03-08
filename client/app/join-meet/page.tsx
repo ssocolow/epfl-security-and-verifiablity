@@ -37,7 +37,7 @@ export default function JoinMeet() {
     return success
   }
 
-  const handleAnswer = (questionId: number, answer: boolean) => {
+  const handleAnswer = (questionId: number, answer: string) => {
     setQuestionAnswer(questionId, answer)
   }
 
@@ -97,7 +97,7 @@ export default function JoinMeet() {
   }
 
   return (
-    <div className="container max-w-4xl py-8">
+    <div className="container max-w-4xl py-8 px-4">
       <div className="mb-8">
         <Link href="/" className="flex items-center text-sm text-muted-foreground hover:text-primary">
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -105,20 +105,20 @@ export default function JoinMeet() {
         </Link>
       </div>
 
-      <h1 className="text-3xl font-bold mb-2">Join Meet: {meetCode}</h1>
-      <p className="text-muted-foreground mb-8">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-2">Join Meet: {meetCode}</h1>
+      <p className="text-muted-foreground mb-6 sm:mb-8">
         Answer the following questions to find common interests with other participants.
       </p>
 
-      <div className="mb-4 flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm text-muted-foreground mb-2 sm:mb-0">
           Question {currentStep + 1} of {selectedQuestions.length}
         </p>
         <div className="flex gap-2">
           {Array.from({ length: selectedQuestions.length }).map((_, index) => (
             <div
               key={index}
-              className={`h-2 w-8 rounded-full ${
+              className={`h-2 w-6 sm:w-8 rounded-full ${
                 index === currentStep ? "bg-primary" : index < currentStep ? "bg-primary/40" : "bg-muted"
               }`}
             />
@@ -133,24 +133,23 @@ export default function JoinMeet() {
         </CardHeader>
         <CardContent>
           <RadioGroup
-            value={currentQuestion.answer === undefined ? "" : currentQuestion.answer ? "true" : "false"}
-            onValueChange={(value) => handleAnswer(currentQuestion.id, value === "true")}
+            value={currentQuestion.answer || ""}
+            onValueChange={(value) => handleAnswer(currentQuestion.id, value)}
+            className="space-y-3"
           >
-            <div className="flex items-center space-x-2 mb-4">
-              <RadioGroupItem value="true" id="true" />
-              <Label htmlFor="true">True</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="false" id="false" />
-              <Label htmlFor="false">False</Label>
-            </div>
+            {currentQuestion.options.map((option, index) => (
+              <div key={index} className="flex items-center space-x-2">
+                <RadioGroupItem value={option} id={`option-${index}`} />
+                <Label htmlFor={`option-${index}`}>{option}</Label>
+              </div>
+            ))}
           </RadioGroup>
         </CardContent>
         <CardFooter className="flex justify-between">
           <Button variant="outline" onClick={handlePrevious} disabled={currentStep === 0}>
             Previous
           </Button>
-          <Button onClick={handleNext} disabled={currentQuestion.answer === undefined}>
+          <Button onClick={handleNext} disabled={!currentQuestion.answer}>
             {isLastQuestion ? "Finish" : "Next"}
             {!isLastQuestion && <ArrowRight className="ml-2 h-4 w-4" />}
           </Button>

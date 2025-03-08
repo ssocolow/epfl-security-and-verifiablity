@@ -68,7 +68,7 @@ export default function CreateMeet() {
   }
 
   return (
-    <div className="container max-w-4xl py-8">
+    <div className="container max-w-4xl py-8 px-4">
       <div className="mb-8">
         <Link href="/" className="flex items-center text-sm text-muted-foreground hover:text-primary">
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -76,14 +76,20 @@ export default function CreateMeet() {
         </Link>
       </div>
 
-      <h1 className="text-3xl font-bold mb-8">Create a New Meet</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Create a New Meet</h1>
 
-      <div className="flex items-center justify-between mb-8 p-4 bg-muted rounded-lg">
-        <div>
+      <div className="flex flex-col items-start justify-between mb-6 sm:mb-8 p-4 bg-muted rounded-lg">
+        <div className="mb-2 sm:mb-0">
           <p className="text-sm font-medium">Your Meet Code</p>
-          <p className="text-2xl font-bold">{meetCode}</p>
+          <p className="text-xl sm:text-2xl font-bold">{meetCode === "LOADING" ? "Generating..." : meetCode}</p>
         </div>
-        <Button variant="outline" size="sm" className="flex items-center gap-2" onClick={copyMeetCode}>
+        <Button
+          variant="outline"
+          size="sm"
+          className="flex items-center gap-2 mt-2 sm:mt-0"
+          onClick={copyMeetCode}
+          disabled={meetCode === "LOADING"}
+        >
           {copied ? (
             <>
               <Check className="h-4 w-4" />
@@ -147,7 +153,7 @@ export default function CreateMeet() {
       </div>
 
       <div className="mt-8 flex justify-end">
-        <Button onClick={handleCreateMeet} size="lg">
+        <Button onClick={handleCreateMeet} size="lg" disabled={meetCode === "LOADING"}>
           Create Meet
         </Button>
       </div>
