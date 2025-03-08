@@ -71,7 +71,7 @@ export default function JoinMeet() {
 
   if (selectedQuestions.length === 0) {
     return (
-      <div className="container max-w-4xl py-8">
+      <div className="container max-w-4xl py-8 mx-auto flex flex-col items-center">
         <div className="mb-8">
           <Link href="/" className="flex items-center text-sm text-muted-foreground hover:text-primary">
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -97,7 +97,7 @@ export default function JoinMeet() {
   }
 
   return (
-    <div className="container max-w-4xl py-8 px-4">
+    <div className="container max-w-4xl py-8 px-4 mx-auto flex flex-col items-center">
       <div className="mb-8">
         <Link href="/" className="flex items-center text-sm text-muted-foreground hover:text-primary">
           <ArrowLeft className="mr-2 h-4 w-4" />
