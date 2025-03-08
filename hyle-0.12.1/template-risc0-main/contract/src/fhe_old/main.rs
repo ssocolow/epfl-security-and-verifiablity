@@ -34,6 +34,7 @@ fn main() {
     let server_r: u32 = rng.random::<u32>();
     let result = server(a, server_hashes, server_r, server_key.clone());
 
+    println!("Result: {}", result);
     //Client-side
     let clear_res: u32 = result.decrypt(&client_key);
     println!("CLIENT: Decrypted server response is {}", clear_res);

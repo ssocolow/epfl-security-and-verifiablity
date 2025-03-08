@@ -1,66 +1,93 @@
 use borsh::{io::Error, BorshDeserialize, BorshSerialize};
 use serde::{Deserialize, Serialize};
+use tfhe::{ConfigBuilder, generate_keys, set_server_key, ServerKey, FheUint32};
+use tfhe::prelude::*;
+use rand::prelude::*;
 
 use sdk::{Digestable, HyleContract, RunResult};
 
-impl HyleContract for Counter {
-    /// Entry point of the contract's logic
+#[derive(BorshSerialize, BorshDeserialize, Debug, Clone)]
+pub enum PsiAction {
+    // Bob adds his set elements
+    AddServerElement { element: u32 },
+    
+    // Alice sends her encrypted element
+    CheckIntersection {
+        encrypted_element: FheUint32,
+        server_key: ServerKey,
+    },
+}
+
+#[derive(BorshSerialize, BorshDeserialize, Serialize, Deserialize, Debug, Clone)]
+pub struct PsiContract {
+    // Bob's set elements
+    pub server_set: Vec<u32>,
+}
+
+impl HyleContract for PsiContract {
     fn execute(&mut self, contract_input: &sdk::ContractInput) -> RunResult {
-        // Parse contract inputs
-        let (action, ctx) = sdk::utils::parse_raw_contract_input::<CounterAction>(contract_input)?;
+        let (action, ctx) = sdk::utils::parse_raw_contract_input::<PsiAction>(contract_input)?;
 
-        // Execute the contract logic
         match action {
-            CounterAction::Increment => self.value += 1,
-        }
+            PsiAction::AddServerElement { element } => {
+                self.server_set.push(element);
+                Ok((format!("Added element to server set"), ctx, vec![]))
+            },
+            
+            PsiAction::CheckIntersection { encrypted_element, server_key } => {
+                // Set up FHE context
+                set_server_key(server_key);
+                
+                // Generate random mask
+                let mut rng = rand::thread_rng();
+                let mask: u32 = rng.gen();
+                let e_mask = FheUint32::encrypt_trivial(mask);
+                
+                // For each server element, check equality and mask result
+                let e_server_elements = self.server_set
+                    .iter()
+                    .map(|&x| FheUint32::encrypt_trivial(x));
 
-        // program_output might be used to give feedback to the user
-        let program_output = format!("new value: {}", self.value);
-        Ok((program_output, ctx, vec![]))
+                // Check if encrypted_element equals any server element
+                let result = e_server_elements
+                    .map(|e_server_elem| {
+                        // Compute (encrypted_element - server_elem) * mask
+                        let diff = &encrypted_element - &e_server_elem;
+                        &diff * &e_mask
+                    })
+                    .fold(FheUint32::encrypt_trivial(0u32), |acc, x| &acc + &x);
+
+                Ok((
+                    "Intersection check complete".to_string(),
+                    ctx,
+                    vec![result.into()]
+                ))
+            }
+        }
     }
 }
 
-/// The action represents the different operations that can be done on the contract
-#[derive(BorshSerialize, BorshDeserialize, Debug, Clone)]
-pub enum CounterAction {
-    Increment,
-}
+// Implementation of required traits
+impl PsiContract {
+    pub fn new() -> Self {
+        Self { server_set: Vec::new() }
+    }
 
-/// The state of the contract, in this example it is fully serialized on-chain
-#[derive(BorshSerialize, BorshDeserialize, Serialize, Deserialize, Debug, Clone)]
-pub struct Counter {
-    pub value: u32,
-}
-
-/// Utils function for the host
-impl Counter {
     pub fn as_bytes(&self) -> Result<Vec<u8>, Error> {
         borsh::to_vec(self)
     }
 }
 
-/// Utils function for the host
-impl CounterAction {
-    pub fn as_blob(&self, contract_name: &str) -> sdk::Blob {
-        sdk::Blob {
-            contract_name: contract_name.into(),
-            data: sdk::BlobData(borsh::to_vec(self).expect("failed to encode BlobData")),
-        }
+impl Digestable for PsiContract {
+    fn as_digest(&self) -> sdk::StateDigest {
+        sdk::StateDigest(borsh::to_vec(self).expect("Failed to encode PSI contract"))
     }
 }
 
-/// Helpers to transform the contrat's state in its on-chain state digest version.
-/// In an optimal version, you would here only returns a hash of the state,
-/// while storing the full-state off-chain
-impl Digestable for Counter {
-    fn as_digest(&self) -> sdk::StateDigest {
-        sdk::StateDigest(borsh::to_vec(self).expect("Failed to encode Balances"))
-    }
-}
-impl From<sdk::StateDigest> for Counter {
+impl From<sdk::StateDigest> for PsiContract {
     fn from(state: sdk::StateDigest) -> Self {
         borsh::from_slice(&state.0)
-            .map_err(|_| "Could not decode hyllar state".to_string())
+            .map_err(|_| "Could not decode PSI contract state".to_string())
             .unwrap()
     }
 }
