@@ -76,13 +76,13 @@ export default function Home() {
           </div>
         </div>
       </header>
-      <main className="flex-1">
-        <section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
-          <div className="container flex max-w-[64rem] flex-col items-center gap-4 text-center px-4">
+      <main className="flex-1 flex flex-col items-center">
+        <section className="w-full space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32 flex items-center justify-center">
+          <div className="container flex max-w-[64rem] flex-col items-center gap-4 text-center">
             <Badge className="px-3 py-1 text-sm" variant="secondary">
               Private Networking
             </Badge>
-            <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
+            <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl max-w-[800px]">
               Connect with people who share your interests
             </h1>
             <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
@@ -111,7 +111,7 @@ export default function Home() {
         </section>
         <section
           id="features"
-          className="container space-y-6 bg-slate-50 py-8 dark:bg-transparent md:py-12 lg:py-24 px-4"
+          className="w-full container space-y-6 bg-slate-50 py-8 dark:bg-transparent md:py-12 lg:py-24 px-4"
         >
           <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
             <h2 className="text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl">Features</h2>
@@ -149,7 +149,7 @@ export default function Home() {
             </Card>
           </div>
         </section>
-        <section id="how-it-works" className="container py-8 md:py-12 lg:py-24 px-4">
+        <section id="how-it-works" className="w-full container py-8 md:py-12 lg:py-24 px-4">
           <div className="mx-auto flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center">
             <h2 className="text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl">How It Works</h2>
             <p className="max-w-full leading-normal text-muted-foreground sm:text-lg sm:leading-7">
@@ -211,7 +211,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <section className="container py-8 md:py-12 lg:py-24 px-4">
+        <section className="w-full container py-8 md:py-12 lg:py-24 px-4">
           <div className="mx-auto flex max-w-[58rem] flex-col items-center gap-4 text-center">
             <h2 className="text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl">Ready to Connect?</h2>
             <p className="max-w-full leading-normal text-muted-foreground sm:text-lg sm:leading-7">
