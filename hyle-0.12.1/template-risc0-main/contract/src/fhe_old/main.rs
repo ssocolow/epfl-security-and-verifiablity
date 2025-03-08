@@ -3,15 +3,15 @@ use tfhe::{ConfigBuilder, generate_keys, set_server_key, FheUint32};
 use tfhe::prelude::*;
 
 
-fn server(e_client_value: FheUint32, server_hashes: Vec<u32>, server_r: u32) -> FheUint32 {
-    let e_server_r = FheUint32::encrypt_trivial(server_r);
+fn server(e_client_value: FheUint32, server_hashes: Vec<u32>, server_r: u32, pk: ServerKey) -> FheUint32 {
+    let e_server_r = FheUint32::encrypt(server_r, pk);
     let e_server_hashes = server_hashes
         .iter()
-        .map(|&server_hash| FheUint32::encrypt_trivial(server_hash));
+        .map(|&server_hash| FheUint32::encrypt(server_hash, pk));
 
     let test_equal = e_server_hashes
         .map(|e_server_hash| &e_client_value - &e_server_hash)
-        .fold(FheUint32::encrypt_trivial(1u32), |acc, e| &acc * &e);
+        .fold(FheUint32::encrypt(1u32, pk), |acc, e| &acc * &e);
 
     return &test_equal * &e_server_r;
 }
