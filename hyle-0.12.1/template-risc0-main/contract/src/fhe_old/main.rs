@@ -3,9 +3,7 @@ use tfhe::{ConfigBuilder, generate_keys, set_server_key, FheUint32};
 use tfhe::prelude::*;
 
 
-fn server(e_client_value: FheUint32, server_hashes: Vec<u32>) -> FheUint32 {
-    let mut rng = rand::rng();
-    let server_r: u32 = rng.random::<u32>();
+fn server(e_client_value: FheUint32, server_hashes: Vec<u32>, server_r: u32) -> FheUint32 {
     let e_server_r = FheUint32::encrypt_trivial(server_r);
     let e_server_hashes = server_hashes
         .iter()
@@ -32,7 +30,9 @@ fn main() {
     //Server-side
     set_server_key(server_key);
     let server_hashes = vec![123456u32, 621234u32, 113458u32];
-    let result = server(a, server_hashes);
+    let mut rng = rand::rng();
+    let server_r: u32 = rng.random::<u32>();
+    let result = server(a, server_hashes, server_r);
 
     //Client-side
     let clear_res: u32 = result.decrypt(&client_key);
