@@ -1,0 +1,33 @@
+
+[package]
+name = "hyle-contracts"
+description = "Metadata of hyle built-in contracts"
+version = { workspace = true }
+edition = { workspace = true }
+# license = { workspace = true }
+homepage = { workspace = true }
+repository = { workspace = true }
+rust-version = "1.81"
+
+[lib]
+path = "metadata.rs"
+
+[dependencies]
+sdk = { workspace = true }
+
+[build-dependencies]
+risc0-build = { version = "1.2.4", optional = true }
+
+[package.metadata.risc0]
+methods = [
+    "amm",
+    "hyllar",
+    "hydentity",
+    "staking",
+    "risc0-recursion",
+    "uuid-tld",
+]
+
+[features]
+build = ["dep:risc0-build"]
+nonreproducible = ["build"]
