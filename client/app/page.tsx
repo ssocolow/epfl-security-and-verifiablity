@@ -164,7 +164,7 @@ export default function Home() {
               </p>
             </div>
             <Image
-              src="/placeholder.svg?height=200&width=400"
+              src="/wallet_image.webp?height=200&width=400"
               width={400}
               height={200}
               alt="Wallet connection illustration"
@@ -190,7 +190,7 @@ export default function Home() {
               </p>
             </div>
             <Image
-              src="/placeholder.svg?height=200&width=400"
+              src="/Create_Join_Meet.webp?height=200&width=400"
               width={400}
               height={200}
               alt="Meeting creation illustration"
