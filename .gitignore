@@ -1,1 +1,4 @@
 *.zip
+/server/target
+/server/Cargo.lock
+/server/.env    

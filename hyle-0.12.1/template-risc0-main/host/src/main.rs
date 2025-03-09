@@ -28,8 +28,15 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    RegisterContract {},
+    RegisterContract {
+
+    },
     Increment {},
+    CheckMembership {
+        m1: u32,
+
+
+    }
 }
 
 #[tokio::main]
